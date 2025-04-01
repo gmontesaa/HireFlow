@@ -2,3 +2,25 @@
 <h1>Welcome To Home Page,{{name}}</h1>
 <h2>This Is The Full Home Page</h2>
 
+<div class ="container">
+    <form action="">
+        <div class="mb-3">
+            <label for ="searchInfluencer" class="form-label">
+                Search for Influencer:
+            </label>
+            <input type="text" class="form-control" name="searchInfluencer"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <p>Searching for {{searchTerm}}</p>
+        {% for influencer in influencers %}
+            <h3>{{influencer.name}}</h3>
+            <h4>{{influencer.description}}</h4>
+            <img src="{{ influencer.image.url }}">
+            {% if influencer.url %}
+                <a href="{{ movie.url }}"> Influencer link</a>
+            {% endif %}
+        {% endfor %}
+    <br/>
+</div>
+                       
