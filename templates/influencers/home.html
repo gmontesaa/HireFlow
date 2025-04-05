@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Influencers Disponibles{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Influencers Disponibles</h1>
+    </div>
+    <div class="col-md-6">
+        <form class="d-flex" method="GET" action="{% url 'home' %}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Buscar influencers..." value="{{ query }}">
+            <select class="form-select me-2" name="category">
+                <option value="">Todas las categorías</option>
+                <option value="fashion" {% if category == 'fashion' %}selected{% endif %}>Moda</option>
+                <option value="beauty" {% if category == 'beauty' %}selected{% endif %}>Belleza</option>
+                <option value="fitness" {% if category == 'fitness' %}selected{% endif %}>Fitness</option>
+                <option value="food" {% if category == 'food' %}selected{% endif %}>Comida</option>
+                <option value="travel" {% if category == 'travel' %}selected{% endif %}>Viajes</option>
+                <option value="tech" {% if category == 'tech' %}selected{% endif %}>Tecnología</option>
+                <option value="lifestyle" {% if category == 'lifestyle' %}selected{% endif %}>Estilo de Vida</option>
+            </select>
+            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for influencer in influencers %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <img src="{{ influencer.profile_picture.url }}" class="card-img-top" alt="{{ influencer.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ influencer.name }}</h5>
+                <p class="card-text">{{ influencer.description|truncatewords:20 }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-primary">{{ influencer.get_category_display }}</span>
+                    <span class="badge bg-secondary">{{ influencer.platform }}</span>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        <i class="bi bi-people"></i> {{ influencer.followers }} seguidores
+                    </small>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        <i class="bi bi-graph-up"></i> {{ influencer.engagement_rate }}% engagement
+                    </small>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        <i class="bi bi-currency-dollar"></i> {{ influencer.price_per_post }} por publicación
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'influencer_detail' influencer.pk %}" class="btn btn-primary">Ver Detalles</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No se encontraron influencers que coincidan con tu búsqueda.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

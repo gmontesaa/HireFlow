@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">Bienvenido a HireFlow</h1>
+            <p class="lead">Encuentra los mejores influencers para tu marca y gestiona tus campañas de marketing de manera eficiente.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o descripción" value="{{ query }}">
+                        </div>
+                        <div class="col-md-4">
+                            <select name="category" class="form-select">
+                                <option value="">Todas las categorías</option>
+                                <option value="lifestyle" {% if category == 'lifestyle' %}selected{% endif %}>Lifestyle</option>
+                                <option value="business" {% if category == 'business' %}selected{% endif %}>Business</option>
+                                <option value="motivation" {% if category == 'motivation' %}selected{% endif %}>Motivation</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if influencers %}
+            {% for influencer in influencers %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ influencer.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@{{ influencer.username }}</h6>
+                        <p class="card-text">{{ influencer.description|truncatewords:30 }}</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-users me-2"></i>{{ influencer.followers|floatformat:0 }} seguidores</li>
+                            <li><i class="fas fa-chart-line me-2"></i>{{ influencer.engagement_rate }}% engagement</li>
+                            <li><i class="fas fa-tag me-2"></i>${{ influencer.price_per_post|floatformat:0 }} por post</li>
+                        </ul>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'influencer_detail' influencer.pk %}" class="btn btn-primary">Ver detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No se encontraron influencers que coincidan con tu búsqueda.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

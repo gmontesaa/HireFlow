@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ influencer.name }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <img src="{{ influencer.profile_picture.url }}" class="card-img-top" alt="{{ influencer.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ influencer.name }}</h5>
+                <p class="card-text">{{ influencer.description }}</p>
+                <div class="mb-3">
+                    <span class="badge bg-primary">{{ influencer.category }}</span>
+                    <span class="badge bg-secondary">{{ influencer.platform }}</span>
+                </div>
+                <div class="mb-2">
+                    <p><i class="bi bi-people"></i> <strong>Seguidores:</strong> {{ influencer.followers }}</p>
+                    <p><i class="bi bi-graph-up"></i> <strong>Engagement Rate:</strong> {{ influencer.engagement_rate }}%</p>
+                    <p><i class="bi bi-currency-dollar"></i> <strong>Precio por publicación:</strong> {{ influencer.price_per_post }}</p>
+                    <p><i class="bi bi-envelope"></i> <strong>Contacto:</strong> {{ influencer.contact_email }}</p>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="d-grid gap-2">
+                    <a href="{% url 'create_campaign' %}" class="btn btn-primary">Crear Campaña</a>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p>Para crear una campaña con este influencer, por favor <a href="{% url 'login' %}">inicia sesión</a> o <a href="{% url 'register' %}">regístrate</a>.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Estadísticas</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Métricas Principales</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Seguidores
+                                <span class="badge bg-primary rounded-pill">{{ influencer.followers }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Engagement Rate
+                                <span class="badge bg-primary rounded-pill">{{ influencer.engagement_rate }}%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Precio por Publicación
+                                <span class="badge bg-primary rounded-pill">{{ influencer.price_per_post }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Información de Contacto</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <i class="bi bi-envelope"></i> Email: {{ influencer.contact_email }}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-globe"></i> Plataforma: {{ influencer.platform }}
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-tag"></i> Categoría: {{ influencer.category }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

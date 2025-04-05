@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ campaign.name }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ campaign.name }}</h2>
+            </div>
+            <div class="card-body">
+                <h5>Descripción</h5>
+                <p>{{ campaign.description }}</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5>Detalles de la Campaña</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Presupuesto
+                                <span class="badge bg-primary rounded-pill">{{ campaign.budget }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Fecha de Inicio
+                                <span>{{ campaign.start_date }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Fecha de Fin
+                                <span>{{ campaign.end_date }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Estado
+                                <span class="badge {% if campaign.status == 'active' %}bg-success{% elif campaign.status == 'completed' %}bg-secondary{% elif campaign.status == 'cancelled' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ campaign.get_status_display }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Influencers en la Campaña</h3>
+            </div>
+            <div class="card-body">
+                {% if campaign_influencers %}
+                <div class="list-group">
+                    {% for ci in campaign_influencers %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ ci.influencer.name }}</h5>
+                            <span class="badge {% if ci.status == 'accepted' %}bg-success{% elif ci.status == 'rejected' %}bg-danger{% else %}bg-warning{% endif %}">
+                                {{ ci.get_status_display }}
+                            </span>
+                        </div>
+                        <p class="mb-1">{{ ci.influencer.description|truncatewords:20 }}</p>
+                        <small class="text-muted">
+                            <i class="bi bi-people"></i> {{ ci.influencer.followers }} seguidores
+                        </small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No hay influencers asignados a esta campaña.
+                </div>
+                <a href="{% url 'home' %}" class="btn btn-primary">Buscar Influencers</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

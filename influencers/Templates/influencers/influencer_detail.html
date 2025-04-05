@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">{{ influencer.name }}</h1>
+                    <p class="text-muted">@{{ influencer.username }}</p>
+                    
+                    <div class="mb-4">
+                        <h5>Información del Influencer</h5>
+                        <p><strong>Plataforma:</strong> {{ influencer.get_platform_display }}</p>
+                        <p><strong>Categoría:</strong> {{ influencer.get_category_display }}</p>
+                        <p><strong>Seguidores:</strong> {{ influencer.followers|floatformat:0 }}</p>
+                        <p><strong>Engagement Rate:</strong> {{ influencer.engagement_rate }}%</p>
+                        <p><strong>Precio por Post:</strong> ${{ influencer.price_per_post|floatformat:0 }}</p>
+                        <p><strong>Email de Contacto:</strong> {{ influencer.contact_email }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Descripción</h5>
+                        <p>{{ influencer.description }}</p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {% if influencer.instagram_url %}
+                        <a href="{{ influencer.instagram_url }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="fab fa-instagram me-2"></i>Ver en Instagram
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'create_campaign' %}" class="btn btn-primary">Crear Campaña</a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary">Iniciar Sesión para Crear Campaña</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
