@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Entorno virtual
+venv/
+ENV/
+env/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Archivos de Selenium
+geckodriver.log
+chromedriver.log
+
+# Archivos de n8n
+.n8n/
+
+# Archivos de Redis
+*.rdb
+
+# Archivos de Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Archivos de cobertura
+.coverage
+htmlcov/
+
+# Archivos de caché
+.cache/
+.pytest_cache/
+
+# Archivos de documentación
+docs/_build/
+site/
+
+# Archivos de respaldo
+*.bak
+*.tmp
+*~
+
+# Archivos de configuración local
+local_settings.py
+settings_local.py
+
+# Archivos de logs
+logs/
+*.log
+
+# Archivos de base de datos
+*.sqlite3
+*.db
+
+# Archivos de dependencias
+node_modules/
+bower_components/
+
+# Archivos de compilación
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db 

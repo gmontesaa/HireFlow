@@ -1,1 +1,70 @@
-<h1>Welcome To About</h1>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center">
+        <!-- Columna del Logo -->
+        <div class="col-md-4 text-center mb-4 mb-md-0">
+            <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" class="img-fluid mb-3" style="max-width: 250px;">
+            <h2 class="h4 text-primary">HireFlow</h2>
+            <p class="text-muted">Innovación en Marketing de Influencers</p>
+        </div>
+        
+        <!-- Columna de Información -->
+        <div class="col-md-8">
+            <h1 class="display-4 mb-4">Sobre Nosotros</h1>
+            <p class="lead mb-4">HireFlow es una plataforma innovadora diseñada para revolucionar la forma en que las marcas y los influencers colaboran.</p>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <h3 class="h5">Nuestra Misión</h3>
+                    <p>Facilitar conexiones significativas entre marcas e influencers, maximizando el impacto de las campañas de marketing digital.</p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="h5">Nuestra Visión</h3>
+                    <p>Ser la plataforma líder en la gestión de marketing de influencers, impulsando el éxito de nuestros clientes.</p>
+                </div>
+            </div>
+
+            <div class="bg-light p-4 rounded">
+                <h3 class="h5 mb-3">¿Por qué elegir HireFlow?</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-2">✓ Gestión integral de campañas</li>
+                    <li class="mb-2">✓ Analytics en tiempo real</li>
+                    <li class="mb-2">✓ Herramientas de colaboración avanzadas</li>
+                    <li>✓ Soporte personalizado 24/7</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Estadísticas -->
+    <div class="row g-4 mt-5 text-center">
+        <div class="col-md-3">
+            <div class="border-start border-primary border-4 p-3">
+                <h3 class="h2 mb-1">500+</h3>
+                <p class="text-muted mb-0">Marcas Activas</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border-start border-primary border-4 p-3">
+                <h3 class="h2 mb-1">1000+</h3>
+                <p class="text-muted mb-0">Influencers</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border-start border-primary border-4 p-3">
+                <h3 class="h2 mb-1">2500+</h3>
+                <p class="text-muted mb-0">Campañas Exitosas</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border-start border-primary border-4 p-3">
+                <h3 class="h2 mb-1">95%</h3>
+                <p class="text-muted mb-0">Satisfacción</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

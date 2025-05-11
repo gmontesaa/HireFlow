@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Búsqueda Avanzada{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Búsqueda Avanzada de Influencers</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="q" class="form-label">Búsqueda</label>
+                    <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Nombre, usuario...">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="category" class="form-label">Categoría</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Todas las categorías</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="min_followers" class="form-label">Seguidores Mínimos</label>
+                    <input type="number" class="form-control" id="min_followers" name="min_followers" value="{{ min_followers }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="max_followers" class="form-label">Seguidores Máximos</label>
+                    <input type="number" class="form-control" id="max_followers" name="max_followers" value="{{ max_followers }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="min_engagement" class="form-label">Engagement Mínimo (%)</label>
+                    <input type="number" step="0.01" class="form-control" id="min_engagement" name="min_engagement" value="{{ min_engagement }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="max_engagement" class="form-label">Engagement Máximo (%)</label>
+                    <input type="number" step="0.01" class="form-control" id="max_engagement" name="max_engagement" value="{{ max_engagement }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="min_price" class="form-label">Precio Mínimo</label>
+                    <input type="number" step="0.01" class="form-control" id="min_price" name="min_price" value="{{ min_price }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="max_price" class="form-label">Precio Máximo</label>
+                    <input type="number" step="0.01" class="form-control" id="max_price" name="max_price" value="{{ max_price }}">
+                </div>
+                
+                <div class="col-md-12">
+                    <label for="location" class="form-label">Ubicación</label>
+                    <input type="text" class="form-control" id="location" name="location" value="{{ location }}" placeholder="Ciudad, país...">
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <a href="{% url 'advanced_search' %}" class="btn btn-secondary">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for influencer in influencers %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ influencer.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@{{ influencer.username }}</h6>
+                        <p class="card-text">{{ influencer.description|truncatewords:30 }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Plataforma:</strong> {{ influencer.get_platform_display }}</li>
+                            <li><strong>Seguidores:</strong> {{ influencer.followers|intcomma }}</li>
+                            <li><strong>Engagement:</strong> {{ influencer.engagement_rate }}%</li>
+                            <li><strong>Precio por Post:</strong> ${{ influencer.price_per_post|intcomma }}</li>
+                            <li><strong>Ubicación:</strong> {{ influencer.location|default:"No especificada" }}</li>
+                            <li><strong>Categorías:</strong> 
+                                {% for category in influencer.categories.all %}
+                                    {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                        <a href="{% url 'influencer_detail' influencer.id %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No se encontraron influencers que coincidan con los criterios de búsqueda.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

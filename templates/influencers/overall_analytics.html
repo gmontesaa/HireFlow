@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Estadísticas Generales</h1>
+    
+    <!-- Tarjetas de métricas principales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Campañas</h5>
+                    <p class="card-text display-4">{{ total_campaigns }}</p>
+                    <div class="small">
+                        <span class="badge bg-success">{{ active_campaigns }} Activas</span>
+                        <span class="badge bg-secondary">{{ completed_campaigns }} Completadas</span>
+                        <span class="badge bg-danger">{{ cancelled_campaigns }} Canceladas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Presupuesto Total</h5>
+                    <p class="card-text display-4">${{ total_budget|floatformat:2 }}</p>
+                    <div class="small">
+                        <span>Promedio: ${{ avg_budget|floatformat:2 }}</span><br>
+                        <span>Máximo: ${{ max_budget|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Influencers</h5>
+                    <p class="card-text display-4">{{ total_influencers }}</p>
+                    <div class="small">
+                        <span>{{ active_influencers }} Disponibles</span><br>
+                        <span>Promedio: {{ avg_followers|floatformat:0 }} seguidores</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Tasa de Éxito</h5>
+                    <p class="card-text display-4">{{ success_rate|floatformat:1 }}%</p>
+                    <div class="small">
+                        <span>Engagement: {{ avg_engagement|floatformat:1 }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficas principales -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Campañas por Mes</h5>
+                    <canvas id="campaignsByMonthChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Distribución por Categoría</h5>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficas secundarias -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Distribución por Plataforma</h5>
+                    <canvas id="platformChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 Influencers más Solicitados</h5>
+                    <canvas id="topInfluencersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfica de campañas por mes
+    const campaignsByMonthCtx = document.getElementById('campaignsByMonthChart').getContext('2d');
+    new Chart(campaignsByMonthCtx, {
+        type: 'line',
+        data: {
+            labels: {{ campaigns_by_month|safe }}.map(item => new Date(item.month).toLocaleDateString('es', { month: 'long', year: 'numeric' })),
+            datasets: [{
+                label: 'Número de Campañas',
+                data: {{ campaigns_by_month|safe }}.map(item => item.count),
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Gráfica de distribución por categoría
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_distribution|safe }}.map(item => item.category),
+            datasets: [{
+                data: {{ category_distribution|safe }}.map(item => item.count),
+                backgroundColor: [
+                    '#e74c3c',
+                    '#c0392b',
+                    '#95a5a6',
+                    '#7f8c8d',
+                    '#34495e'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Gráfica de distribución por plataforma
+    const platformCtx = document.getElementById('platformChart').getContext('2d');
+    new Chart(platformCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ platform_distribution|safe }}.map(item => item.platform),
+            datasets: [{
+                data: {{ platform_distribution|safe }}.map(item => item.count),
+                backgroundColor: [
+                    '#e74c3c',
+                    '#c0392b',
+                    '#95a5a6',
+                    '#7f8c8d'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Gráfica de top influencers
+    const topInfluencersCtx = document.getElementById('topInfluencersChart').getContext('2d');
+    new Chart(topInfluencersCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ top_influencers|safe }}.map(item => item.influencer__name),
+            datasets: [{
+                label: 'Número de Campañas',
+                data: {{ top_influencers|safe }}.map(item => item.count),
+                backgroundColor: '#e74c3c'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,26 +1,51 @@
-<!--<h1>Welcome To Home Page</h1>-->
-<h1>Welcome To Home Page,{{name}}</h1>
-<h2>This Is The Full Home Page</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-<div class ="container">
-    <form action="">
-        <div class="mb-3">
-            <label for ="searchInfluencer" class="form-label">
-                Search for Influencer:
-            </label>
-            <input type="text" class="form-control" name="searchInfluencer"/>
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section con Logo -->
+    <div class="text-center mb-5">
+        <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" class="img-fluid mb-4" style="max-width: 200px;">
+        <h1 class="display-4 mb-3">Bienvenido a HireFlow</h1>
+        <p class="lead text-muted">Tu plataforma integral para la gestión de influencers y campañas publicitarias</p>
+    </div>
+
+    <!-- Características Principales -->
+    <div class="row g-4 py-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <img src="{% static 'img/logo_hireflow.png' %}" alt="Influencers" class="mb-3" style="width: 64px;">
+                    <h3 class="h5">Gestión de Influencers</h3>
+                    <p class="text-muted">Administra tu red de influencers de manera eficiente</p>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-    <p>Searching for {{searchTerm}}</p>
-        {% for influencer in influencers %}
-            <h3>{{influencer.name}}</h3>
-            <h4>{{influencer.description}}</h4>
-            <img src="{{ influencer.image.url }}">
-            {% if influencer.url %}
-                <a href="{{ movie.url }}"> Influencer link</a>
-            {% endif %}
-        {% endfor %}
-    <br/>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <img src="{% static 'img/logo_hireflow.png' %}" alt="Campañas" class="mb-3" style="width: 64px;">
+                    <h3 class="h5">Campañas Efectivas</h3>
+                    <p class="text-muted">Crea y gestiona campañas publicitarias exitosas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <img src="{% static 'img/logo_hireflow.png' %}" alt="Analytics" class="mb-3" style="width: 64px;">
+                    <h3 class="h5">Analytics Avanzados</h3>
+                    <p class="text-muted">Analiza el rendimiento de tus campañas en tiempo real</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Llamada a la acción -->
+    <div class="text-center pt-4">
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 me-2">Comenzar Ahora</a>
+        <a href="{% url 'about' %}" class="btn btn-outline-secondary btn-lg px-4">Saber Más</a>
+    </div>
 </div>
+{% endblock %}
                        

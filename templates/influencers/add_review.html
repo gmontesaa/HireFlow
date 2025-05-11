@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Agregar Reseña</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ influencer.name }}</h5>
+            <p class="card-text">Campaña: {{ campaign.name }}</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Calificación</label>
+                    <select name="rating" id="rating" class="form-select" required>
+                        <option value="">Selecciona una calificación</option>
+                        {% for value, label in review.RATING_CHOICES %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Comentario</label>
+                    <textarea name="comment" id="comment" class="form-control" rows="4" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Enviar Reseña</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

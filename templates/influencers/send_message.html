@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Enviar Mensaje - {{ influencer.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Enviar Mensaje a {{ influencer.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Instrucciones</h5>
+                        <p class="mb-0">
+                            1. Copia el mensaje generado<br>
+                            2. Haz clic en el enlace de Instagram<br>
+                            3. Pega el mensaje en el chat<br>
+                            4. Marca como enviado cuando hayas terminado
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Mensaje Generado:</h5>
+                        <div class="bg-light p-3 rounded">
+                            <pre class="mb-0" id="messageText">{{ message }}</pre>
+                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyMessage()">
+                                Copiar Mensaje
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Enlace Directo a Instagram:</h5>
+                        <a href="{{ instagram_link }}" target="_blank" class="btn btn-primary">
+                            <i class="fab fa-instagram"></i> Abrir Chat en Instagram
+                        </a>
+                    </div>
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Marcar como Enviado
+                        </button>
+                        <a href="{% url 'campaign_detail' campaign.id %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a la Campaña
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyMessage() {
+    const messageText = document.getElementById('messageText').textContent;
+    navigator.clipboard.writeText(messageText).then(() => {
+        const button = document.querySelector('button[onclick="copyMessage()"]');
+        const originalText = button.textContent;
+        button.textContent = '¡Copiado!';
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    });
+}
+</script>
+{% endblock %} 

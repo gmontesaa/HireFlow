@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <!-- Logo y Título -->
+                    <div class="text-center mb-4">
+                        <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" class="img-fluid mb-4" style="max-width: 150px;">
+                        <h2 class="h3 mb-3">Iniciar Sesión</h2>
+                        <p class="text-muted">Bienvenido de nuevo a HireFlow</p>
+                    </div>
+
+                    <!-- Formulario de Login -->
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Iniciar Sesión
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Enlaces adicionales -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted">
+                            ¿No tienes una cuenta? 
+                            <a href="{% url 'register' %}" class="text-primary text-decoration-none">Regístrate aquí</a>
+                        </p>
+                        <a href="#" class="text-muted text-decoration-none small">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="text-center mt-4">
+                <p class="text-muted small mb-0">Al iniciar sesión, aceptas nuestros</p>
+                <p class="text-muted small">
+                    <a href="#" class="text-decoration-none">Términos de servicio</a> y 
+                    <a href="#" class="text-decoration-none">Política de privacidad</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

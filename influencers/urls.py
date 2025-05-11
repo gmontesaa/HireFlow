@@ -11,4 +11,7 @@ urlpatterns = [
     path('analytics/campaigns/', views.campaign_analytics, name='campaign_analytics'),
     path('analytics/overall/', views.overall_analytics, name='overall_analytics'),
     path('about/', views.about, name='about'),
+    path('campaign/<int:campaign_id>/influencer/<int:influencer_id>/send-message/',
+         views.send_message,
+         name='send_message'),
 ] 
