@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+    <!-- Fondo con gradiente -->
+    <defs>
+        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f0f2f5;stop-opacity:0.9"/>
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.9"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Fondo -->
+    <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+    
+    <!-- Patrón de logos -->
+    <g opacity="0.1">
+        <!-- Logo 1 -->
+        <g transform="translate(100,100)">
+            <circle cx="20" cy="20" r="18" fill="#e74c3c"/>
+            <path d="M15 10v20M25 10v20M15 20h10" 
+                  stroke="white" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  fill="none"/>
+        </g>
+        
+        <!-- Logo 2 -->
+        <g transform="translate(300,200)">
+            <circle cx="20" cy="20" r="18" fill="#e74c3c"/>
+            <path d="M15 10v20M25 10v20M15 20h10" 
+                  stroke="white" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  fill="none"/>
+        </g>
+        
+        <!-- Logo 3 -->
+        <g transform="translate(500,300)">
+            <circle cx="20" cy="20" r="18" fill="#e74c3c"/>
+            <path d="M15 10v20M25 10v20M15 20h10" 
+                  stroke="white" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  fill="none"/>
+        </g>
+        
+        <!-- Logo 4 -->
+        <g transform="translate(700,400)">
+            <circle cx="20" cy="20" r="18" fill="#e74c3c"/>
+            <path d="M15 10v20M25 10v20M15 20h10" 
+                  stroke="white" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  fill="none"/>
+        </g>
+        
+        <!-- Logo 5 -->
+        <g transform="translate(900,500)">
+            <circle cx="20" cy="20" r="18" fill="#e74c3c"/>
+            <path d="M15 10v20M25 10v20M15 20h10" 
+                  stroke="white" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  fill="none"/>
+        </g>
+    </g>
+</svg> 

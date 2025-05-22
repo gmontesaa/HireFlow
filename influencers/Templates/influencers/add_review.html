@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Agregar Reseña{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Agregar Reseña para {{ influencer.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="rating" class="form-label">Calificación</label>
+            <select name="rating" id="rating" class="form-select">
+                <option value="">Selecciona una calificación</option>
+                <option value="1">1 estrella</option>
+                <option value="2">2 estrellas</option>
+                <option value="3">3 estrellas</option>
+                <option value="4">4 estrellas</option>
+                <option value="5">5 estrellas</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="comment" class="form-label">Comentario</label>
+            <textarea name="comment" id="comment" class="form-control" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Reseña</button>
+        <a href="{% url 'influencers:campaign_detail' campaign.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %} 

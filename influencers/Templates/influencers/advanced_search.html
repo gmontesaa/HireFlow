@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Búsqueda Avanzada{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Búsqueda Avanzada de Influencers</h2>
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="q" placeholder="Nombre, usuario..." value="{{ query }}">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="category">
+                    <option value="">Todas las categorías</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if cat.id|stringformat:'s' == selected_category %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="min_followers" placeholder="Mín. seguidores" value="{{ min_followers }}">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="max_followers" placeholder="Máx. seguidores" value="{{ max_followers }}">
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        {% for influencer in influencers %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ influencer.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@{{ influencer.username }}</h6>
+                        <p class="card-text">{{ influencer.description|truncatewords:30 }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Plataforma:</strong> {{ influencer.get_platform_display }}</li>
+                            <li><strong>Seguidores:</strong> {{ influencer.followers|intcomma }}</li>
+                            <li><strong>Engagement:</strong> {{ influencer.engagement_rate }}%</li>
+                            <li><strong>Precio por Post:</strong> ${{ influencer.price_per_post|intcomma }}</li>
+                        </ul>
+                        <a href="{% url 'influencers:influencer_detail' influencer.slug %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No se encontraron influencers con los criterios seleccionados.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

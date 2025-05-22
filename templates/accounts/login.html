@@ -1,31 +1,37 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Iniciar Sesión{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Iniciar Sesión</h2>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Nombre de usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="text-center mb-4">
+        <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" style="height:80px;">
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card" style="padding: 2rem;">
+                <div class="card-header">
+                    <h2 class="text-center" style="font-size:2.5rem; font-weight:bold;">Iniciar Sesión</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>¿No tienes una cuenta? <a href="{% url 'register' %}">Regístrate</a></p>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-                    </div>
-                </form>
-                <div class="text-center mt-3">
-                    <p>¿No tienes una cuenta? <a href="{% url 'register' %}">Regístrate</a></p>
                 </div>
             </div>
         </div>

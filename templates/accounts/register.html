@@ -1,25 +1,31 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}Registro de Empresa{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Registro de Empresa</h2>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary">Registrarse</button>
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="text-center mb-4">
+        <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" style="height:80px;">
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card" style="padding: 2rem;">
+                <div class="card-header">
+                    <h2 class="text-center">Registro de Empresa</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Registrarse</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
                     </div>
-                </form>
-                <div class="text-center mt-3">
-                    <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
                 </div>
             </div>
         </div>

@@ -1,7 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from ..models import Campaign, CampaignInfluencer
 
 class MessageService:
+    """
+    Servicio que maneja la lógica de negocio relacionada con los mensajes.
+    """
     @staticmethod
     def generate_campaign_message(campaign_influencer):
         """
@@ -55,4 +59,104 @@ Para más información, puedes visitar tu perfil en nuestra plataforma:
             'campaign': campaign_influencer.campaign,
             'status': campaign_influencer.status,
             'message_sent_date': campaign_influencer.message_sent_date
+        }
+
+    @staticmethod
+    def send_message_to_influencer(campaign_influencer_id, message):
+        """
+        Envía un mensaje a un influencer de una campaña.
+        
+        Args:
+            campaign_influencer_id (int): ID de la relación campaña-influencer
+            message (str): Contenido del mensaje
+            
+        Returns:
+            CampaignInfluencer: Instancia actualizada de la relación
+            
+        Raises:
+            ValidationError: Si no se puede enviar el mensaje
+        """
+        try:
+            campaign_influencer = CampaignInfluencer.objects.get(id=campaign_influencer_id)
+            
+            if campaign_influencer.status not in ['review_approved', 'message_sent']:
+                raise ValidationError("No se puede enviar un mensaje en el estado actual")
+            
+            # Aquí se implementaría la lógica real de envío de mensajes
+            # Por ahora solo actualizamos el estado
+            campaign_influencer.status = 'message_sent'
+            campaign_influencer.message_sent_date = timezone.now()
+            campaign_influencer.save()
+            
+            return campaign_influencer
+        except Exception as e:
+            raise ValidationError(f"Error al enviar el mensaje: {str(e)}")
+
+    @staticmethod
+    def get_pending_messages(company_id=None):
+        """
+        Obtiene los mensajes pendientes de envío.
+        
+        Args:
+            company_id (int, optional): ID de la empresa para filtrar
+            
+        Returns:
+            QuerySet: Conjunto de relaciones campaña-influencer con mensajes pendientes
+        """
+        queryset = CampaignInfluencer.objects.filter(
+            status='review_approved'
+        ).select_related('campaign', 'influencer')
+        
+        if company_id:
+            queryset = queryset.filter(campaign__company_id=company_id)
+            
+        return queryset
+
+    @staticmethod
+    def get_sent_messages(company_id=None, days=30):
+        """
+        Obtiene los mensajes enviados en los últimos días.
+        
+        Args:
+            company_id (int, optional): ID de la empresa para filtrar
+            days (int): Número de días hacia atrás para buscar
+            
+        Returns:
+            QuerySet: Conjunto de relaciones campaña-influencer con mensajes enviados
+        """
+        date_limit = timezone.now() - timezone.timedelta(days=days)
+        queryset = CampaignInfluencer.objects.filter(
+            status='message_sent',
+            message_sent_date__gte=date_limit
+        ).select_related('campaign', 'influencer')
+        
+        if company_id:
+            queryset = queryset.filter(campaign__company_id=company_id)
+            
+        return queryset
+
+    @staticmethod
+    def get_message_stats(company_id=None):
+        """
+        Obtiene estadísticas de mensajes.
+        
+        Args:
+            company_id (int, optional): ID de la empresa para filtrar
+            
+        Returns:
+            dict: Diccionario con estadísticas de mensajes
+        """
+        queryset = CampaignInfluencer.objects.filter(status__in=['message_sent', 'accepted', 'rejected'])
+        
+        if company_id:
+            queryset = queryset.filter(campaign__company_id=company_id)
+            
+        return {
+            'total_messages': queryset.filter(status='message_sent').count(),
+            'accepted_messages': queryset.filter(status='accepted').count(),
+            'rejected_messages': queryset.filter(status='rejected').count(),
+            'acceptance_rate': (
+                queryset.filter(status='accepted').count() /
+                queryset.filter(status__in=['accepted', 'rejected']).count() * 100
+            ) if queryset.filter(status__in=['accepted', 'rejected']).exists() else 0,
         } 

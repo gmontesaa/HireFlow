@@ -22,36 +22,34 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Detalles de Campañas</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Estado</th>
-                                    <th>Presupuesto</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Tasa de Completitud</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for campaign in campaign_data %}
-                                <tr>
-                                    <td>{{ campaign.name }}</td>
-                                    <td>{{ campaign.status }}</td>
-                                    <td>${{ campaign.budget }}</td>
-                                    <td>{{ campaign.start_date }}</td>
-                                    <td>{{ campaign.end_date }}</td>
-                                    <td>{{ campaign.completion_rate }}%</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Detalles de Campañas</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Presupuesto</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Tasa de Completitud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for campaign in campaign_data %}
+                            <tr>
+                                <td>{{ campaign.name }}</td>
+                                <td>{{ campaign.status }}</td>
+                                <td>${{ campaign.budget }}</td>
+                                <td>{{ campaign.start_date }}</td>
+                                <td>{{ campaign.end_date }}</td>
+                                <td>{{ campaign.completion_rate }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -65,9 +63,9 @@
         labels: ['Activas', 'Completadas', 'Canceladas'],
         datasets: [{
             data: [
-                {{ campaign_data|filter:"status='active'"|length }},
-                {{ campaign_data|filter:"status='completed'"|length }},
-                {{ campaign_data|filter:"status='cancelled'"|length }}
+                {{ active_count }},
+                {{ completed_count }},
+                {{ cancelled_count }}
             ],
             backgroundColor: ['#28a745', '#007bff', '#dc3545']
         }]

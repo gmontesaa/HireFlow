@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Scrapear Influencer{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Scrapear Influencer de Instagram</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary mt-3">Scrapear</button>
+        <a href="{% url 'influencers:home' %}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+</div>
+{% endblock %} 

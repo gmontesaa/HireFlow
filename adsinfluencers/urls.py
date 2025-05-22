@@ -24,13 +24,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', influencers_views.home, name='home'),
-    path('about/', influencers_views.about, name='about'),
-    path('influencer/<int:pk>/', influencers_views.influencer_detail, name='influencer_detail'),
-    path('campaign/create/', influencers_views.create_campaign, name='create_campaign'),
-    path('campaign/<int:pk>/', influencers_views.campaign_detail, name='campaign_detail'),
-    path('campaign/analytics/', influencers_views.campaign_analytics, name='campaign_analytics'),
-    path('analytics/', influencers_views.overall_analytics, name='overall_analytics'),
+    path('', include('influencers.urls')),
     
     # URLs de autenticación
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),

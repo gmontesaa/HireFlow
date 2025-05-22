@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load static %}
 
 {% block title %}Influencers Disponibles{% endblock %}
 
 {% block content %}
+<div class="container mt-4 text-center">
+    <img src="{% static 'img/logo_hireflow.png' %}" alt="HireFlow Logo" style="height:100px; margin-bottom: 20px;">
+</div>
 <div class="container mt-4">
     <h2>Encuentra Influencers</h2>
     
@@ -40,6 +44,9 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{ influencer.name }}</h5>
+                        {% if influencer.categories.all %}
+                            <span class="badge bg-primary mb-2">{{ influencer.categories.all.0.name }}</span>
+                        {% endif %}
                         <h6 class="card-subtitle mb-2 text-muted">@{{ influencer.username }}</h6>
                         <p class="card-text">{{ influencer.description|truncatewords:30 }}</p>
                         <ul class="list-unstyled">
@@ -53,7 +60,7 @@
                                 {% endfor %}
                             </li>
                         </ul>
-                        <a href="{% url 'influencer_detail' influencer.id %}" class="btn btn-primary">Ver Detalles</a>
+                        <a href="{% url 'influencers:influencer_detail' influencer.slug %}" class="btn btn-primary">Ver Detalles</a>
                     </div>
                 </div>
             </div>

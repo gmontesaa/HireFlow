@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Campañas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Mis Campañas</h2>
+    {% if campaigns %}
+        <div class="row">
+            {% for campaign in campaigns %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ campaign.name }}</h5>
+                            <p class="card-text">{{ campaign.description|truncatewords:20 }}</p>
+                            <ul class="list-unstyled mb-3">
+                                <li><strong>Presupuesto:</strong> ${{ campaign.budget }}</li>
+                                <li><strong>Estado:</strong> {{ campaign.get_status_display }}</li>
+                                <li><strong>Fecha inicio:</strong> {{ campaign.start_date }}</li>
+                                <li><strong>Fecha fin:</strong> {{ campaign.end_date }}</li>
+                            </ul>
+                            <a href="{% url 'influencers:campaign_detail' campaign.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                            <a href="{% url 'influencers:campaign_edit' campaign.id %}" class="btn btn-secondary btn-sm">Editar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">No tienes campañas registradas.</div>
+    {% endif %}
+    <a href="{% url 'influencers:campaign_create' %}" class="btn btn-success mt-3">Crear Nueva Campaña</a>
+</div>
+{% endblock %} 

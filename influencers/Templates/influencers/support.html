@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Soporte{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Soporte</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="subject" class="form-label">Asunto</label>
+            <input type="text" class="form-control" id="subject" name="subject" required>
+        </div>
+        <div class="mb-3">
+            <label for="message" class="form-label">Mensaje</label>
+            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="priority" class="form-label">Prioridad</label>
+            <select class="form-select" id="priority" name="priority">
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+</div>
+{% endblock %} 

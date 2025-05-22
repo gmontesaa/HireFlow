@@ -25,7 +25,7 @@
                         <i class="bi bi-instagram me-2"></i>Ver en Instagram
                     </a>
                     {% if user.is_authenticated %}
-                    <a href="{% url 'create_campaign' %}" class="btn btn-primary">Crear Campaña</a>
+                    <a href="{% url 'campaign_create' %}" class="btn btn-primary">Crear Campaña</a>
                     {% else %}
                     <div class="alert alert-info">
                         <p>Para crear una campaña con este influencer, por favor <a href="{% url 'login' %}">inicia sesión</a> o <a href="{% url 'register' %}">regístrate</a>.</p>

@@ -25,12 +25,19 @@ from django.utils import timezone
 
 # Create your views here.
 def home(request):
+    """
+    Vista principal que muestra la lista de influencers.
+    """
     query = request.GET.get('q')
     category = request.GET.get('category')
+    platform = request.GET.get('platform')
+    sort_by = request.GET.get('sort_by')
     
     influencers = InfluencerService.search_influencers(
         query=query,
-        category=category
+        category=category,
+        platform=platform,
+        sort_by=sort_by
     )
     categories = Category.objects.all()
     
@@ -39,174 +46,169 @@ def home(request):
         'categories': categories,
         'query': query,
         'selected_category': category,
+        'selected_platform': platform,
+        'sort_by': sort_by,
     }
     return render(request, 'influencers/home.html', context)
 
-def influencer_detail(request, pk):
-    influencer = get_object_or_404(Influencer, pk=pk)
-    reviews = ReviewService.get_influencer_reviews(influencer)
-    rating = ReviewService.get_influencer_rating(influencer)
+@login_required
+def influencer_detail(request, slug):
+    """
+    Vista que muestra los detalles de un influencer.
+    """
+    influencer = get_object_or_404(Influencer, slug=slug)
+    reviews = ReviewService.get_influencer_reviews(influencer.id)
+    stats = InfluencerService.get_influencer_stats(influencer.id)
     
     context = {
         'influencer': influencer,
         'reviews': reviews,
-        'rating': rating
+        'stats': stats,
     }
     return render(request, 'influencers/influencer_detail.html', context)
 
 @login_required
-def create_campaign(request):
-    if request.method == 'POST':
-        form = CampaignForm(request.POST)
-        if form.is_valid():
-            campaign = form.save(commit=False)
-            campaign.company = request.user
-            campaign.save()
-            messages.success(request, 'Campaña creada exitosamente')
-            return redirect('home')
-    else:
-        form = CampaignForm()
-    return render(request, 'influencers/create_campaign.html', {'form': form})
+def campaign_list(request):
+    """
+    Vista que muestra la lista de campañas del usuario.
+    """
+    campaigns = CampaignService.search_campaigns(
+        company=request.user.id,
+        status=request.GET.get('status')
+    )
+    
+    context = {
+        'campaigns': campaigns,
+        'active_campaigns': CampaignService.get_active_campaigns(),
+    }
+    return render(request, 'influencers/campaign_list.html', context)
 
 @login_required
-def campaign_detail(request, pk):
-    campaign = get_object_or_404(Campaign, pk=pk, company=request.user)
-    campaign_influencers = CampaignInfluencer.objects.filter(campaign=campaign)
-    reviews = ReviewService.get_campaign_reviews(campaign)
-    stats = CampaignService.get_campaign_stats(campaign)
-    rating = ReviewService.get_campaign_rating(campaign)
+def campaign_detail(request, campaign_id):
+    """
+    Vista que muestra los detalles de una campaña.
+    """
+    campaign = get_object_or_404(Campaign, id=campaign_id, company=request.user)
+    stats = CampaignService.get_campaign_stats(campaign.id)
+    reviews = ReviewService.get_campaign_reviews(campaign.id)
     
     context = {
         'campaign': campaign,
-        'campaign_influencers': campaign_influencers,
-        'reviews': reviews,
         'stats': stats,
-        'rating': rating
+        'reviews': reviews,
     }
     return render(request, 'influencers/campaign_detail.html', context)
 
 @login_required
-@require_POST
-def add_influencer_to_campaign(request, campaign_pk, influencer_pk):
-    campaign = get_object_or_404(Campaign, pk=campaign_pk, company=request.user)
-    influencer = get_object_or_404(Influencer, pk=influencer_pk)
-    
-    if not CampaignService.can_add_influencer(campaign, influencer):
-        messages.warning(request, 'No se puede agregar este influencer a la campaña')
-        return redirect('campaign_detail', pk=campaign.pk)
-    
-    campaign_influencer = CampaignInfluencer.objects.create(
-        campaign=campaign,
-        influencer=influencer,
-        status='pending_review'
-    )
-    
-    # Enviar a revisión de Hireflow
-    n8n_service = N8NService()
-    review_result = n8n_service.send_to_hireflow_review(campaign_influencer)
-    
-    if review_result:
-        messages.success(request, 'Influencer agregado a la campaña y enviado a revisión')
+def campaign_create(request):
+    """
+    Vista para crear una nueva campaña.
+    """
+    if request.method == 'POST':
+        form = CampaignForm(request.POST)
+        if form.is_valid():
+            campaign = CampaignService.create_campaign(request.user, form.cleaned_data)
+            messages.success(request, 'Campaña creada exitosamente')
+            return redirect('campaign_detail', campaign_id=campaign.id)
     else:
-        messages.error(request, 'Error al enviar a revisión. Por favor, intente nuevamente')
+        form = CampaignForm()
     
-    return redirect('campaign_detail', pk=campaign.pk)
+    return render(request, 'influencers/campaign_form.html', {'form': form})
 
 @login_required
-@require_POST
-def process_hireflow_review(request):
-    try:
-        data = json.loads(request.body)
-        campaign_influencer_id = data.get('campaign_influencer_id')
-        is_approved = data.get('is_approved')
-        review_notes = data.get('review_notes')
-        
-        campaign_influencer = get_object_or_404(CampaignInfluencer, id=campaign_influencer_id)
-        
-        if is_approved:
-            campaign_influencer.status = 'review_approved'
-            campaign_influencer.review_notes = review_notes
-            campaign_influencer.save()
-            
-            # Enviar mensaje al influencer
-            n8n_service = N8NService()
-            message_result = n8n_service.send_message_to_influencer(campaign_influencer)
-            
-            if message_result:
-                return JsonResponse({'status': 'success', 'message': 'Revisión aprobada y mensaje enviado'})
-            else:
-                return JsonResponse({'status': 'error', 'message': 'Error al enviar mensaje al influencer'})
-        else:
-            campaign_influencer.status = 'review_rejected'
-            campaign_influencer.review_notes = review_notes
-            campaign_influencer.save()
-            return JsonResponse({'status': 'success', 'message': 'Revisión rechazada'})
-            
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
+def campaign_edit(request, campaign_id):
+    """
+    Vista para editar una campaña existente.
+    """
+    campaign = get_object_or_404(Campaign, id=campaign_id, company=request.user)
+    
+    if request.method == 'POST':
+        form = CampaignForm(request.POST, instance=campaign)
+        if form.is_valid():
+            CampaignService.update_campaign(campaign.id, form.cleaned_data)
+            messages.success(request, 'Campaña actualizada exitosamente')
+            return redirect('campaign_detail', campaign_id=campaign.id)
+    else:
+        form = CampaignForm(instance=campaign)
+    
+    return render(request, 'influencers/campaign_form.html', {'form': form})
 
 @login_required
-@require_POST
-def scrape_influencer_data(request):
-    """Endpoint para obtener datos de un influencer mediante scraping."""
-    try:
-        username = request.POST.get('username')
-        platform = request.POST.get('platform')
-        
-        if not username or not platform:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Se requiere username y platform'
-            })
-        
-        if platform == 'instagram':
-            data = ScrapingService.scrape_instagram_data(username)
-        elif platform == 'tiktok':
-            data = ScrapingService.scrape_tiktok_data(username)
-        else:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Plataforma no soportada'
-            })
-        
-        if data:
-            # Crear o actualizar influencer
-            influencer, created = Influencer.objects.update_or_create(
-                username=username,
-                platform=platform,
-                defaults={
-                    'name': data['name'],
-                    'description': data['bio'],
-                    'followers': data['followers'],
-                    'engagement_rate': data['engagement_rate'],
-                    'price_per_post': data['price_per_post']
+def add_influencer_to_campaign(request, campaign_id):
+    """
+    Vista para agregar un influencer a una campaña.
+    """
+    if request.method == 'POST':
+        influencer_id = request.POST.get('influencer_id')
+        try:
+            CampaignService.add_influencer_to_campaign(campaign_id, influencer_id)
+            messages.success(request, 'Influencer agregado exitosamente')
+        except ValidationError as e:
+            messages.error(request, str(e))
+    
+    return redirect('campaign_detail', campaign_id=campaign_id)
+
+@login_required
+def create_review(request, campaign_id, influencer_id):
+    """
+    Vista para crear una reseña.
+    """
+    if request.method == 'POST':
+        try:
+            ReviewService.create_review(
+                request.user,
+                campaign_id,
+                influencer_id,
+                {
+                    'rating': int(request.POST.get('rating')),
+                    'comment': request.POST.get('comment')
                 }
             )
-            
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Influencer creado/actualizado exitosamente',
-                'data': {
-                    'id': influencer.id,
-                    'name': influencer.name,
-                    'username': influencer.username,
-                    'platform': influencer.platform,
-                    'followers': influencer.followers,
-                    'engagement_rate': influencer.engagement_rate,
-                    'price_per_post': influencer.price_per_post
-                }
-            })
-        else:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'No se pudieron obtener los datos del influencer'
-            })
-            
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        })
+            messages.success(request, 'Reseña creada exitosamente')
+        except ValidationError as e:
+            messages.error(request, str(e))
+    
+    return redirect('campaign_detail', campaign_id=campaign_id)
+
+@login_required
+def scrape_influencer(request):
+    """
+    Vista para scrapear datos de un influencer de Instagram.
+    """
+    if request.method == 'POST':
+        form = ScrapingForm(request.POST)
+        if form.is_valid():
+            try:
+                username = form.cleaned_data['username']
+                categories = form.cleaned_data.get('categories', [])
+                
+                scraping_service = ScrapingService()
+                influencer = scraping_service.create_influencer_from_instagram(
+                    username,
+                    categories
+                )
+                
+                messages.success(request, 'Influencer creado exitosamente')
+                return redirect('influencer_detail', slug=influencer.slug)
+            except ValidationError as e:
+                messages.error(request, str(e))
+    else:
+        form = ScrapingForm()
+    
+    return render(request, 'influencers/scraping_form.html', {'form': form})
+
+@login_required
+@require_POST
+def send_message(request, campaign_influencer_id):
+    """
+    Vista para enviar un mensaje a un influencer.
+    """
+    try:
+        message = request.POST.get('message')
+        MessageService.send_message_to_influencer(campaign_influencer_id, message)
+        return JsonResponse({'status': 'success'})
+    except ValidationError as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 def about(request):
     #return HttpResponse('<h1>Welcome To About</h1>')
@@ -218,7 +220,7 @@ def campaign_analytics(request):
     campaign_data = []
     
     for campaign in campaigns:
-        stats = CampaignService.get_campaign_stats(campaign)
+        stats = CampaignService.get_campaign_stats(campaign.id)
         campaign_data.append({
             'name': campaign.name,
             'completion_rate': (stats['completed_influencers'] / stats['total_influencers'] * 100) if stats['total_influencers'] > 0 else 0,
@@ -228,9 +230,17 @@ def campaign_analytics(request):
             'end_date': campaign.end_date
         })
     
+    # Filtrar los conteos en Python
+    active_count = len([c for c in campaign_data if c['status'] == 'active'])
+    completed_count = len([c for c in campaign_data if c['status'] == 'completed'])
+    cancelled_count = len([c for c in campaign_data if c['status'] == 'cancelled'])
+    
     context = {
         'campaign_data': campaign_data,
-        'title': 'Análisis de Campañas'
+        'title': 'Análisis de Campañas',
+        'active_count': active_count,
+        'completed_count': completed_count,
+        'cancelled_count': cancelled_count
     }
     return render(request, 'influencers/campaign_analytics.html', context)
 
@@ -349,7 +359,7 @@ def create_influencer(request):
         if form.is_valid():
             influencer = form.save()
             messages.success(request, 'Influencer creado exitosamente')
-            return redirect('influencer_detail', pk=influencer.pk)
+            return redirect('influencer_detail', slug=influencer.slug)
     else:
         form = InfluencerForm()
     
@@ -387,7 +397,7 @@ def add_influencer(request):
                 )
                 
                 messages.success(request, 'Influencer agregado exitosamente')
-                return redirect('influencer_detail', pk=influencer.pk)
+                return redirect('influencer_detail', slug=influencer.slug)
             else:
                 messages.error(request, 'No se pudieron obtener los datos del influencer')
     else:

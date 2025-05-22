@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Campaña{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ campaign.name }}</h2>
+    <p>{{ campaign.description }}</p>
+    <ul class="list-unstyled mb-3">
+        <li><strong>Presupuesto:</strong> ${{ campaign.budget }}</li>
+        <li><strong>Estado:</strong> {{ campaign.get_status_display }}</li>
+        <li><strong>Fecha inicio:</strong> {{ campaign.start_date }}</li>
+        <li><strong>Fecha fin:</strong> {{ campaign.end_date }}</li>
+    </ul>
+    <h4>Influencers en la campaña</h4>
+    <div class="row">
+        {% if campaign.influencers.all %}
+            {% for influencer in campaign.influencers.all %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ influencer.name }}</h5>
+                            <p class="card-text">{{ influencer.description|truncatewords:20 }}</p>
+                            <a href="{% url 'influencers:influencer_detail' influencer.slug %}" class="btn btn-primary btn-sm">Ver Influencer</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">No hay influencers en esta campaña.</div>
+            </div>
+        {% endif %}
+    </div>
+    <a href="{% url 'influencers:campaign_edit' campaign.id %}" class="btn btn-secondary mt-3">Editar Campaña</a>
+    <a href="{% url 'influencers:campaign_list' %}" class="btn btn-link mt-3">Volver a la lista</a>
+</div>
+{% endblock %} 

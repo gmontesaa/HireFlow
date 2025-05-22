@@ -22,11 +22,32 @@ class Influencer(models.Model):
     instagram_url = models.URLField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True)
     is_available = models.BooleanField(default=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.username)
+            slug = base_slug
+            counter = 1
+            while Influencer.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name} (@{self.username})"
+
+    class Meta:
+        verbose_name = 'Influencer'
+        verbose_name_plural = 'Influencers'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['username']),
+            models.Index(fields=['slug']),
+        ]
 
 class Campaign(models.Model):
     STATUS_CHOICES = [
